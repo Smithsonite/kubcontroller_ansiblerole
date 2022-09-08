@@ -1,0 +1,58 @@
+---
+- name: Add apt-transport-https
+  ansible.builtin.apt:
+    name: apt-transport-https
+    state: present
+
+- name: Add ca-certificates
+  ansible.builtin.apt:
+    name: ca-certificates
+    state: present
+
+- name: Add curl
+  ansible.builtin.apt:
+    name: curl
+    state: present
+
+- name: Pull hachicorp key
+  ansible.builtin.shell: sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+
+- name: Add Kubernetes repository to apt
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-{{ ansible_distribution_release }} main"
+    filename: kubernetes.list
+    state: present
+
+- name: Run the equivalent of "apt-get update" as a separate step
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: Install kubelet
+  ansible.builtin.apt:
+    name: kubelet
+    state: present
+
+- name: Install kubeadm
+  ansible.builtin.apt:
+    name: kubeadm
+    state: present
+
+- name: Install kubectl
+  ansible.builtin.apt:
+    name: kubectl
+    state: present
+
+- name: Prevent kubelet from being upgraded
+  ansible.builtin.dpkg_selections:
+    name: kubelet
+    selection: hold
+
+- name: Prevent kubeadm from being upgraded
+  ansible.builtin.dpkg_selections:
+    name: kubeadm
+    selection: hold
+
+- name: Prevent kubectl from being upgraded
+  ansible.builtin.dpkg_selections:
+    name: kubectl
+    selection: hold
