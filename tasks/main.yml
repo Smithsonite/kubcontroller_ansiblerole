@@ -101,5 +101,5 @@
   register: configtoml
 
 - name: Create containderd config
-  when: not configtoml.stat.exsits
   ansible.builtin.shell: containerd config default > /etc/containerd/config.toml
+  when: not configtoml.stat.exists
