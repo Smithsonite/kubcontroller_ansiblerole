@@ -88,3 +88,18 @@
     src: https://github.com/containernetworking/plugins/releases/download/v1.1.1/cni-plugins-linux-arm-v1.1.1.tgz
     dest: /opt/cni/bin
     remote_src: true
+
+- name: Create containerd config directory
+  ansible.builtin.file:
+    path: /etc/containerd/
+    state: directory
+    mode: '0755'
+
+- name: Check for containerd config
+  ansible.builtin.stat:
+    path: /etc/containerd/config.toml
+  register: configtoml
+
+- name: Create containderd config
+  when: configtoml.stat.exsits
+  ansible.builtin.shell: containerd config default > /etc/containerd/config.toml
