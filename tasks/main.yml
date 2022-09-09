@@ -27,19 +27,39 @@
   ansible.builtin.apt:
     update_cache: true
 
+- name: Install containerd
+  ansible.builtin.apt:
+    name: containerd
+    state: present
+
+- name: Prevent containerd from being upgraded
+  ansible.builtin.dpkg_selections:
+    name: containerd
+    selection: hold
+
+- name: Install runc
+  ansible.builtin.apt:
+    name: runc
+    state: present
+
+- name: Prevent runc from being upgraded
+  ansible.builtin.dpkg_selections:
+    name: runc
+    selection: hold
+
 - name: Install kubelet
   ansible.builtin.apt:
-    name: kubelet
+    name: kubelet=1.25.0-00
     state: present
 
 - name: Install kubeadm
   ansible.builtin.apt:
-    name: kubeadm
+    name: kubeadm=1.25.0-00
     state: present
 
 - name: Install kubectl
   ansible.builtin.apt:
-    name: kubectl
+    name: kubectl=1.25.0-00
     state: present
 
 - name: Prevent kubelet from being upgraded
