@@ -76,3 +76,15 @@
   ansible.builtin.dpkg_selections:
     name: kubectl
     selection: hold
+
+- name: Create a CNI directory if it does not exist
+  ansible.builtin.file:
+    path: /opt/cni/bin
+    state: directory
+    mode: '0777'
+
+- name: Unarchive CNI
+  ansible.builtin.unarchive:
+    src: https://github.com/containernetworking/plugins/releases/download/v1.1.1/cni-plugins-linux-arm-v1.1.1.tgz
+    dest: /opt/cni/bin
+    remote_src: true
