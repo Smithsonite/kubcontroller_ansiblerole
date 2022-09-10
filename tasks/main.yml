@@ -14,6 +14,16 @@
     name: curl
     state: present
 
+- name: Add the overlay module
+  community.general.modprobe:
+    name: overlay
+    state: present
+
+- name: Add the br_netfilter module
+  community.general.modprobe:
+    name: br_netfilter
+    state: present
+
 - name: Pull Kubernetes key
   ansible.builtin.shell: sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
 
@@ -95,11 +105,18 @@
     state: directory
     mode: '0755'
 
-- name: Check for containerd config
-  ansible.builtin.stat:
-    path: /etc/containerd/config.toml
-  register: configtoml
+- name: Copy config.toml
+  ansible.builtin.copy:
+    src: ~/git/SmitKub/playbooks/kubadminstall/roles/csmithson12345.kubcontroller/files/config.toml
+    dest: /etc/containerd/config.toml
+    owner: root
+    group: root
+    mode: '0755'
 
-- name: Create containderd config
-  ansible.builtin.shell: containerd config default > /etc/containerd/config.toml
-  when: not configtoml.stat.exists
+- name: Copy kubernetes.conf to systemctl
+  ansible.builtin.copy:
+    src: ~/git/SmitKub/playbooks/kubadminstall/roles/csmithson12345.kubcontroller/files/kubernetes.conf
+    dest: /etc/sysctl.d/kubernetes.conf
+    owner: root
+    group: root
+    mode: '0755'
