@@ -130,7 +130,7 @@
     group: root
     mode: '0755'
   notify:
-    - 'kubworker: Restart containerd'
+    - 'kubcontroller: Restart containerd'
 
 - name: Copy kubernetes.conf to systemctl
   ansible.builtin.copy:
@@ -139,8 +139,5 @@
     owner: root
     group: root
     mode: '0755'
-  register: kubesysctl
-
-- name: Reload sysctl
-  ansible.builtin.command: sysctl --system
-  when: kubesysctl.changed
+  notify:
+    - 'kubcontroller: Reload sysctl'
