@@ -29,10 +29,6 @@
   ansible.builtin.command: /bin/bash roles/csmithson12345.kubcontroller/files/kubekey.sh
   when: curl is succeeded
 
-# - name: Pull Kubernetes key
-#   ansible.builtin.shell: sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
-#   when: curl is succeeded
-
 - name: Add Kubernetes repository to apt
   ansible.builtin.apt_repository:
     repo: "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main"
@@ -97,13 +93,20 @@
   ansible.builtin.file:
     path: /opt/cni/bin
     state: directory
-    mode: '0777'
+    mode: '0755'
+  register: makecnidir
+
+- name: List contents of CNI Directory
+  ansible.builtin.command: ls mydir
+  register: cnicontents
+  when: makecnidir is succeeded
 
 - name: Unarchive CNI
   ansible.builtin.unarchive:
     src: https://github.com/containernetworking/plugins/releases/download/v1.1.1/cni-plugins-linux-arm-v1.1.1.tgz
     dest: /opt/cni/bin
     remote_src: true
+  when: cnicontents.stdout == ""
 
 - name: Create containerd config directory
   ansible.builtin.file:
