@@ -39,7 +39,7 @@
 
 - name: Install containerd
   ansible.builtin.apt:
-    name: containerd
+    name: containerd=1.5.9-0ubuntu3
     state: present
 
 - name: Prevent containerd from being upgraded
@@ -49,7 +49,7 @@
 
 - name: Install runc
   ansible.builtin.apt:
-    name: runc
+    name: runc=1.1.0-0ubuntu1
     state: present
 
 - name: Prevent runc from being upgraded
